@@ -1,7 +1,14 @@
 package cn.ipanel.wendeng.service.controller;
 
+import cn.ipanel.wendeng.service.controller.resp.Result;
+import cn.ipanel.wendeng.service.entity.VideoData;
+import cn.ipanel.wendeng.service.service.IVideoDateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @program: wendeng
@@ -10,6 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
  * @create: 2019-05-15 17:41
  **/
 @RestController
-@RequestMapping(value = "/video")
+@RequestMapping(value = "/wendeng/video")
 public class VideoDataController {
+
+    private IVideoDateService videoDateService;
+
+    @Autowired
+    public void VideoDataController(IVideoDateService videoDateService){
+        this.videoDateService = videoDateService;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public Result<List<VideoData>> queryVideos(){
+        return new Result<>(videoDateService.findAll());
+    }
 }
