@@ -1,7 +1,8 @@
 package cn.ipanel.wendeng.spider;
 
-import cn.ipanel.wendeng.service.entity.VideoListApiUrl;
-import cn.ipanel.wendeng.service.service.IVideoListUrlService;
+import cn.ipanel.wendeng.service.entity.Channel;
+import cn.ipanel.wendeng.service.service.IChannelService;
+import cn.ipanel.wendeng.service.spider.processor.TelevisionProcessor;
 import cn.ipanel.wendeng.service.spider.req.Item;
 import cn.ipanel.wendeng.service.spider.req.VideoModel;
 import com.alibaba.fastjson.JSON;
@@ -13,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit4.SpringRunner;
+import us.codecraft.webmagic.Spider;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
@@ -31,23 +34,24 @@ import java.util.concurrent.BlockingQueue;
 @EnableAsync
 public class SpiderTest {
 
-    private VideoListApiUrl videoListApiUrl;
-    private IVideoListUrlService videoListUrlService;
+    private Channel channel;
+    private IChannelService channelService;
     private HtmlTask htmlTask;
     private BlockingQueue<Item> itemQueue;
-
+    private TelevisionProcessor televisionProcessor;
     @Autowired
-    public void SpiderTest(IVideoListUrlService videoListUrlService,HtmlTask htmlTask, BlockingQueue<Item> itemQueue){
-        this.videoListUrlService = videoListUrlService;
+    public void SpiderTest(IChannelService channelService, HtmlTask htmlTask, BlockingQueue<Item> itemQueue,TelevisionProcessor televisionProcessor){
+        this.channelService = channelService;
         this.htmlTask = htmlTask;
         this.itemQueue = itemQueue;
+        this.televisionProcessor = televisionProcessor;
     }
 
     @Test
     public void spider() throws Exception{
-        videoListApiUrl = videoListUrlService.findAll().get(0);
-        log.info("test {}", JSON.toJSON(videoListApiUrl));
-        String url = videoListApiUrl.getApiUrl();
+        channel = channelService.findAll().get(0);
+        log.info("test {}", JSON.toJSON(channel));
+        String url = channel.getApiUrl();
         String data = HttpClient.doGet(url);
         List<Item> itemList= JSON.parseArray(data,Item.class);
         log.info("data:{}", itemList.size());
@@ -79,9 +83,9 @@ public class SpiderTest {
 
     @Test
     public void thredsTask() throws Exception{
-        videoListApiUrl = videoListUrlService.findAll().get(0);
-        log.info("test {}", JSON.toJSON(videoListApiUrl));
-        String url = videoListApiUrl.getApiUrl();
+        channel = channelService.findAll().get(0);
+        log.info("test {}", JSON.toJSON(channel));
+        String url = channel.getApiUrl();
         String data = HttpClient.doGet(url);
         List<Item> itemList= JSON.parseArray(data,Item.class);
         log.info("data:{}", itemList.size());
@@ -95,14 +99,22 @@ public class SpiderTest {
     @Test
     public void threadsTask2() throws Exception{
         htmlTask.getVideo();
-        videoListApiUrl = videoListUrlService.findAll().get(0);
-        log.info("test {}", JSON.toJSON(videoListApiUrl));
-        String url = videoListApiUrl.getApiUrl();
+        channel = channelService.findAll().get(0);
+        log.info("test {}", JSON.toJSON(channel));
+        String url = channel.getApiUrl();
         String data = HttpClient.doGet(url);
         List<Item> itemList= JSON.parseArray(data,Item.class);
         log.info("data:{}", itemList.size());
         for(int i=0;i<itemList.size();i++){
             itemQueue.put(itemList.get(i));
         }
+    }
+    @Test
+    public void webMagic(){
+
+        final List<String> pageUrl = new ArrayList<>();
+        //获取各个栏目的数据链接
+        channelService.findAll().forEach(info->pageUrl.add(info.getApiUrl()));
+        Spider.create(televisionProcessor).addUrl(pageUrl.toArray(new String[pageUrl.size()])).thread(5).run();
     }
 }

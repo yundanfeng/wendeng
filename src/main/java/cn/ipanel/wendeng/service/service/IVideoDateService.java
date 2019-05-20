@@ -13,4 +13,6 @@ import java.util.List;
 public interface IVideoDateService {
 
     public List<VideoData> findAll();
+
+    public void addVideoData(VideoData videoData);
 }

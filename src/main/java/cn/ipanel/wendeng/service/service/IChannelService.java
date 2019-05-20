@@ -1,6 +1,6 @@
 package cn.ipanel.wendeng.service.service;
 
-import cn.ipanel.wendeng.service.entity.VideoListApiUrl;
+import cn.ipanel.wendeng.service.entity.Channel;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * @author: hezy
  * @create: 2019-05-16 10:44
  **/
-public interface IVideoListUrlService {
+public interface IChannelService {
 
-    public List<VideoListApiUrl> findAll();
+    public List<Channel> findAll();
 }

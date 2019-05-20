@@ -54,4 +54,9 @@ public class VideoData implements Serializable{
 
     @Column
     private Integer isSync;
+
+    @Column
+    private String publishTime;
+
+    @Column String updateTime;
 }

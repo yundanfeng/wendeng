@@ -27,8 +27,12 @@ public class VideoDataServiceImol implements IVideoDateService{
 
     @Override
     public List<VideoData> findAll(){
-        log.info("");
         return (List<VideoData>)videoDataRepository.findAll();
+    }
+
+    @Override
+    public void addVideoData(VideoData videoData){
+        videoDataRepository.save(videoData);
     }
 
 }

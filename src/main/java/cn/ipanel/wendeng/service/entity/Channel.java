@@ -13,7 +13,7 @@ import java.io.Serializable;
  **/
 @Entity
 @Data
-public class VideoListApiUrl implements Serializable{
+public class Channel implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
