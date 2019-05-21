@@ -5,11 +5,8 @@ import cn.ipanel.wendeng.service.spider.req.VideoModel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONPath;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.BlockingQueue;
 
 /**
  * @program: wendeng
@@ -21,17 +18,11 @@ import java.util.concurrent.BlockingQueue;
 @Component
 public class HtmlTask {
 
-    private BlockingQueue<Item> itemQueue;
-
-    @Autowired
-    public void HtmlTask(BlockingQueue<Item> itemQueue){
-        this.itemQueue = itemQueue;
-    }
 
     @Async("myAsync")
     public void getItem(Item item) throws Exception{
         log.info("formateURl:{}",item.getUrl());
-        itemQueue.put(item);
+        //itemQueue.put(item);
         String subUrl = item.getUrl().substring(0,item.getUrl().lastIndexOf("/"));
         String lastUrl = item.getUrl().substring(item.getUrl().lastIndexOf("/")+1, item.getUrl().lastIndexOf("."));
         //log.info("subUrl:{},lastUrl:{},jsUrl:{}/data{}.js",subUrl,lastUrl,subUrl,lastUrl);
@@ -50,8 +41,8 @@ public class HtmlTask {
     public void getVideo() throws Exception{
         Item item;
         while(true){
-            item = itemQueue.take();
-            log.info("item:{}",item.getUrl());
+            //item = itemQueue.take();
+            //log.info("item:{}",item.getUrl());
         }
     }
 }

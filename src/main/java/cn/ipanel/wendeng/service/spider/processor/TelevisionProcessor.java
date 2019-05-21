@@ -2,6 +2,7 @@ package cn.ipanel.wendeng.service.spider.processor;
 
 import cn.ipanel.wendeng.service.entity.VideoData;
 import cn.ipanel.wendeng.service.service.IVideoDateService;
+import cn.ipanel.wendeng.service.spider.SpiderConfig;
 import cn.ipanel.wendeng.service.spider.req.Item;
 import cn.ipanel.wendeng.service.spider.req.VideoModel;
 import com.alibaba.fastjson.JSON;
@@ -17,6 +18,7 @@ import us.codecraft.webmagic.selector.Json;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,10 +37,16 @@ public class TelevisionProcessor implements PageProcessor{
 
     private IVideoDateService videoDateService;
 
+    private BlockingQueue<String> fileQueue;
+
+    private SpiderConfig spiderConfig;
 
     @Autowired
-    public void TelevisionProcessor(IVideoDateService videoDateService){
+    public void TelevisionProcessor(IVideoDateService videoDateService,BlockingQueue<String> fileQueue,
+                                    SpiderConfig spiderConfig){
         this.videoDateService = videoDateService;
+        this.fileQueue = fileQueue;
+        this.spiderConfig = spiderConfig;
     }
 
     @Override
@@ -66,18 +74,25 @@ public class TelevisionProcessor implements PageProcessor{
                 String lastUrl = formatURL.substring(formatURL.lastIndexOf("/")+1, formatURL.lastIndexOf("."));
                 String videoUrl = new StringBuffer(subUrl).append("/data").append(lastUrl).append(".js").toString();
                 //除去已经爬取过的详情页
-                if(!apiUrlList.contains(videoUrl)){
+                int videoNum = Integer.parseInt(spiderConfig.getVideoNum());
+                if(!apiUrlList.contains(videoUrl) && videos.size()<=videoNum){
                     videos.add(videoUrl);
+                    //列表页取数据
+                    VideoData videoData = new VideoData();
+                    videoData.setTitle(item.getTitle());
+                    videoData.setItemId(item.getItemId());
+                    videoData.setChannelId(item.getChannelIds().get(0));
+                    videoData.setThumbImage(item.getThumbImage());
+                    videoData.setHtmlUrl(item.getUrl());
+                    videoData.setPublishTime(item.getPublishTime());
+                    TelevisionProcessor.videoDataMap.put(videoUrl,videoData);
+                    //图片链接队列
+                    try {
+                        fileQueue.put(item.getThumbImage());
+                    }catch (InterruptedException e){
+                        log.error(e.toString());
+                    }
                 }
-                //列表页取数据
-                VideoData videoData = new VideoData();
-                videoData.setTitle(item.getTitle());
-                videoData.setItemId(item.getItemId());
-                videoData.setChannelId(item.getChannelIds().get(0));
-                videoData.setThumbImage(item.getThumbImage());
-                videoData.setHtmlUrl(item.getUrl());
-                videoData.setPublishTime(item.getPublishTime());
-                TelevisionProcessor.videoDataMap.put(videoUrl,videoData);
             });
             //详情页链接添加
             page.addTargetRequests(videos);
@@ -101,6 +116,12 @@ public class TelevisionProcessor implements PageProcessor{
                 video.setEditor(videoModel.getEditor());
                 video.setIsSync(0);
                 videoDateService.addVideoData(video);
+                //文件链接队列
+                try {
+                    fileQueue.put(video.getOssUrl());
+                }catch (InterruptedException e){
+                    log.error(e.toString());
+                }
             }
         }
     }

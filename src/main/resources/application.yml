@@ -28,3 +28,7 @@ info:
   project: wendeng
   application:
     name: marketing-compaign-services
+spider:
+  file-path: F:/file
+  update_cron: 0 5 16 * * ?
+  video-num: 15

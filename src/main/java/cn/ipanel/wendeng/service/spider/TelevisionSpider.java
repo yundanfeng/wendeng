@@ -3,6 +3,7 @@ package cn.ipanel.wendeng.service.spider;
 import cn.ipanel.wendeng.service.service.IChannelService;
 import cn.ipanel.wendeng.service.spider.processor.TelevisionProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Spider;
 
 import java.util.ArrayList;
@@ -14,17 +15,20 @@ import java.util.List;
  * @author: hezy
  * @create: 2019-05-20 11:41
  **/
+@Component
 public class TelevisionSpider {
 
     private IChannelService videoListUrlService;
+    private TelevisionProcessor televisionProcessor;
 
     @Autowired
-    public void TelevisionSpider(IChannelService videoListUrlService){
+    public void TelevisionSpider(IChannelService videoListUrlService,TelevisionProcessor televisionProcessor){
         this.videoListUrlService = videoListUrlService;
+        this.televisionProcessor = televisionProcessor;
     }
 
     public void doUpdate(){
-
+        doTelevisionUpdate();
     }
 
     private void doTelevisionUpdate(){
@@ -33,7 +37,7 @@ public class TelevisionSpider {
         //获取各个栏目的数据链接
         videoListUrlService.findAll().forEach(info->pageUrl.add(info.getApiUrl()));
 
-        Spider spider = Spider.create(new TelevisionProcessor()).addUrl((String[]) pageUrl.toArray());
+        Spider.create(televisionProcessor).addUrl(pageUrl.toArray(new String[pageUrl.size()])).thread(5).run();
 
     }
 

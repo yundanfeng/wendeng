@@ -1,6 +1,5 @@
 package cn.ipanel.wendeng.service.config;
 
-import cn.ipanel.wendeng.service.spider.req.Item;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -36,7 +35,7 @@ public class ExecutorConfig {
     }
 
     @Bean
-    public BlockingQueue<Item> itemQueue() {
+    public BlockingQueue<String> fileQueue(){
         return new ArrayBlockingQueue<>(100000);
     }
 }

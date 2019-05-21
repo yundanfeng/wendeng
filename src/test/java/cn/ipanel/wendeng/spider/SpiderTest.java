@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * @program: wendeng
@@ -37,13 +36,11 @@ public class SpiderTest {
     private Channel channel;
     private IChannelService channelService;
     private HtmlTask htmlTask;
-    private BlockingQueue<Item> itemQueue;
     private TelevisionProcessor televisionProcessor;
     @Autowired
-    public void SpiderTest(IChannelService channelService, HtmlTask htmlTask, BlockingQueue<Item> itemQueue,TelevisionProcessor televisionProcessor){
+    public void SpiderTest(IChannelService channelService, HtmlTask htmlTask,TelevisionProcessor televisionProcessor){
         this.channelService = channelService;
         this.htmlTask = htmlTask;
-        this.itemQueue = itemQueue;
         this.televisionProcessor = televisionProcessor;
     }
 
@@ -106,7 +103,7 @@ public class SpiderTest {
         List<Item> itemList= JSON.parseArray(data,Item.class);
         log.info("data:{}", itemList.size());
         for(int i=0;i<itemList.size();i++){
-            itemQueue.put(itemList.get(i));
+            //itemQueue.put(itemList.get(i));
         }
     }
     @Test
