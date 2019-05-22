@@ -62,8 +62,10 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/**/*.ttf", "anon");
 		filterChainDefinitionMap.put("/**/*.png", "anon");
 		filterChainDefinitionMap.put("/**/*.gif", "anon");
-		filterChainDefinitionMap.put("/v2/api-docs", "anon");
-		filterChainDefinitionMap.put("/swagger**", "anon");
+        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+        filterChainDefinitionMap.put("/webjars/**", "anon");
+        filterChainDefinitionMap.put("/api/**", "anon");
+        filterChainDefinitionMap.put("/swagger-resources/**", "anon");
 		filterChainDefinitionMap.put("/logout", "logout");
 		filterChainDefinitionMap.put("/login", "anon");
 		filterChainDefinitionMap.put("/login.html", "anon");
