@@ -20,6 +20,11 @@ spring:
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
       ddl-auto: update
+  thymeleaf:
+    enable-spring-el-compiler: true
+    cache: false
+  resources:
+    static-locations: classpath:/templates/,classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
 logging:
   path: /Users/hezy/tmp/log
   level:
@@ -29,6 +34,7 @@ info:
   application:
     name: marketing-compaign-services
 spider:
+  file-download: NO
   file-path: F:/file
-  update_cron: 0 5 16 * * ?
+  update_cron: 0 4 0 * * ?
   video-num: 15

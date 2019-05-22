@@ -29,6 +29,8 @@ public class Globals {
 
     public static final String COMMON_SEPARATOR = ",";
 
+    // 设置登录session过期时间，单位为秒
+    public static final int GLOBAL_LOGIN_SESSION_EXPIRE = 60 * 30;
 
     public static ZoneOffset getSystemDefaultZoneOffSet() {
         return Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.now());
@@ -264,4 +266,47 @@ public class Globals {
         }
         return "";
     }
+
+    public static String timeQuantum() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int hour = localDateTime.getHour();
+        if (hour < 1 ) {
+            return "子时";
+        }
+        if (hour < 3) {
+            return "丑时";
+        }
+        if (hour < 5) {
+            return "寅时";
+        }
+        if (hour < 7) {
+            return "卯时";
+        }
+        if (hour < 9) {
+            return "辰时";
+        }
+        if (hour < 11) {
+            return "巳时";
+        }
+        if (hour < 13) {
+            return "午时";
+        }
+        if (hour < 15) {
+            return "未时";
+        }
+        if (hour < 17) {
+            return "申时";
+        }
+        if (hour < 19) {
+            return "酉时";
+        }
+        if (hour < 21) {
+            return "戌时";
+        }
+        if (hour < 23) {
+            return "亥时";
+        }
+        return "子时";
+    }
+
 }

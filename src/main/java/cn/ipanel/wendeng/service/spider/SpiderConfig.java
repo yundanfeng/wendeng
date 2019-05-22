@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:application.yml")
 public class SpiderConfig {
 
+    public static final String FILE_DOWNLOAD_FALSE = "false";
+
     /**
      * 文件保存地址
      */
@@ -30,4 +32,10 @@ public class SpiderConfig {
      */
     @Value("${spider.video-num}")
     private String videoNum;
+
+    /**
+     * 是否启动文件下载进程
+     */
+    @Value("${spider.file-download}")
+    private String fileDownload;
 }

@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONPath;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
@@ -30,6 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 public class TelevisionProcessor implements PageProcessor{
+
+    /**
+     * 列表页数据链接特征，用于区分列表页还是详情页
+     */
+    private static final String LIST_DATA_SOURCE = "lgdata";
 
     public static Map<String,VideoData> videoDataMap = new ConcurrentHashMap<>();
 
@@ -58,7 +64,7 @@ public class TelevisionProcessor implements PageProcessor{
     public void process(Page page){
         String url = page.getRequest().getUrl();
         //列表页
-        if(url.contains("lgdata")){
+        if(url.contains(LIST_DATA_SOURCE)){
             Json json = page.getJson();
             List<Item> videoDataList = json.toList(Item.class);
             //查出已经爬取过的详情页url，做去重
@@ -67,15 +73,16 @@ public class TelevisionProcessor implements PageProcessor{
             //添加详情页链接
             List<String> videos = new ArrayList<>();
             videoDataList.forEach(item->{
-                log.info("item:{}",item.getItemId());
+                log.info("itemID:{}",item.getItemId());
                 //构造详情页数据链接
                 String formatURL = item.getUrl();
                 String subUrl = formatURL.substring(0,formatURL.lastIndexOf("/"));
                 String lastUrl = formatURL.substring(formatURL.lastIndexOf("/")+1, formatURL.lastIndexOf("."));
                 String videoUrl = new StringBuffer(subUrl).append("/data").append(lastUrl).append(".js").toString();
                 //除去已经爬取过的详情页
-                int videoNum = Integer.parseInt(spiderConfig.getVideoNum());
-                if(!apiUrlList.contains(videoUrl) && videos.size()<=videoNum){
+                String videoNum = spiderConfig.getVideoNum();
+                boolean videoNumLimit = !StringUtils.isEmpty(videoNum) && videos.size()<= Integer.parseInt(videoNum);
+                if(!apiUrlList.contains(videoUrl) && videoNumLimit){
                     videos.add(videoUrl);
                     //列表页取数据
                     VideoData videoData = new VideoData();
@@ -103,24 +110,25 @@ public class TelevisionProcessor implements PageProcessor{
             VideoModel videoModel = JSON.parseObject(json,VideoModel.class);
             if(null != videoModel){
                 log.info("video:{},name:{},editor:{},id:{}",videoModel.getFirst_name(),videoModel.getName(),videoModel.getEditor(),videoModel.get_id());
-            }
-            //列表页数据和详情页数据
-            VideoData video = TelevisionProcessor.videoDataMap.get(page.getRequest().getUrl());
-            //保存数据
-            if(null != video){
-                video.setContent(videoModel.getContent());
-                video.setOssUrl(videoModel.getOssUrl());
-                video.setApiUrl(page.getRequest().getUrl());
-                video.setDataId(videoModel.get_id());
-                video.setSource(videoModel.getSource());
-                video.setEditor(videoModel.getEditor());
-                video.setIsSync(0);
-                videoDateService.addVideoData(video);
-                //文件链接队列
-                try {
-                    fileQueue.put(video.getOssUrl());
-                }catch (InterruptedException e){
-                    log.error(e.toString());
+                //列表页数据和详情页数据拼装保存数据库
+                VideoData video = TelevisionProcessor.videoDataMap.get(page.getRequest().getUrl());
+                //保存数据
+                if(null != video){
+                    videoDataMap.remove(page.getRequest().getUrl());
+                    video.setContent(videoModel.getContent());
+                    video.setOssUrl(videoModel.getOssUrl());
+                    video.setApiUrl(page.getRequest().getUrl());
+                    video.setDataId(videoModel.get_id());
+                    video.setSource(videoModel.getSource());
+                    video.setEditor(videoModel.getEditor());
+                    video.setIsSync(0);
+                    videoDateService.addVideoData(video);
+                    //文件链接队列
+                    try {
+                        fileQueue.put(video.getOssUrl());
+                    }catch (InterruptedException e){
+                        log.error(e.toString());
+                    }
                 }
             }
         }

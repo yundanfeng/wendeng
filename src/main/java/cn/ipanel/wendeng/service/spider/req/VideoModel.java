@@ -20,13 +20,19 @@ public class VideoModel {
     private String original_time;
 
     private String first_name;
-    //null
+    /**
+     * null
+     */
     private String number;
 
     private String ossUrl;
-    //null
+    /**
+     * null
+     */
     private String title;
-    //null
+    /**
+     * null
+     */
     private String video_image;
 
     private String tree;
