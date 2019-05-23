@@ -11,4 +11,6 @@ import cn.ipanel.wendeng.service.controller.resp.ManagerVO;
 public interface IManagerService {
 
     ManagerVO queryManager(String username);
+
+    ManagerVO login(String username, String password) throws Exception;
 }

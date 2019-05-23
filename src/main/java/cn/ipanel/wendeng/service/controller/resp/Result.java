@@ -16,6 +16,8 @@ public class Result<T> implements Serializable {
     public static final String EXCEPTION = "500";
     private String message = "success";
     private String code = SUCCESS;
+    private static final String FAILED_MESSAGE = "failed";
+    private static final String FAILED_CODE = "-1";
     private T data;
 
     public Result() {
@@ -29,6 +31,14 @@ public class Result<T> implements Serializable {
         this.message = message;
     }
 
+    public Result(T data, String message) {
+        this.data = data;
+        if (data instanceof Boolean && !(Boolean) data) {
+            this.code = FAILED_CODE;
+            this.message = FAILED_MESSAGE;
+        }
+        this.message = message;
+    }
     public Result(String message, String code) {
         super();
         this.code = code;

@@ -10,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 
@@ -25,21 +26,25 @@ public class CommonController {
     @Resource
     IManagerService managerService;
 
+    @ApiIgnore
     @RequestMapping(value = "")
     public String index(ModelMap map) {
         return indexHtml(map, "");
     }
+    @ApiIgnore
     @RequestMapping(value = "login")
     public String login() {
         return "login";
     }
 
+    @ApiIgnore
     @RequestMapping(value = "loginSuccess")
     @ResponseBody
     public Result<Boolean> loginSuccess() {
         return new Result<>(true);
     }
 
+    @ApiIgnore
     @RequestMapping(value = "index")
     public String indexHtml(ModelMap map, @RequestParam(value = "info", required = false) String info) {
         if (!Globals.isEmpty(info)) {

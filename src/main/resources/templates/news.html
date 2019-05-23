@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:shiro="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>厦门随心版后台管理</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link th:href="@{/vendor/bootstrap/css/bootstrap.css}" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link th:href="@{/vendor/metisMenu/metisMenu.css}" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link th:href="@{/vendor/datatables-plugins/dataTables.bootstrap.css}" rel="stylesheet">
+
+    <!-- DataTables Responsive CSS -->
+    <link th:href="@{/vendor/datatables-responsive/dataTables.responsive.css}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link th:href="@{/dist/css/sb-admin-2.css}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link th:href="@{/vendor/font-awesome/css/font-awesome.css}" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- daterange picker -->
+    <link rel="stylesheet" th:href="@{/bower_components/bootstrap-daterangepicker/daterangepicker.css}">
+
+    <!-- datetime picker -->
+    <link rel="stylesheet" th:href="@{/bower_components/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css}">
+
+    <!-- date picker -->
+    <link rel="stylesheet" th:href="@{/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.css}">
+
+    <!--multiselect-->
+    <link rel="stylesheet" th:href="@{/bower_components/bootstrap-multiselect/css/bootstrap-multiselect.css}">
+
+    <!--bootstrap-treeview-->
+    <link th:href="@{/dist/bootstrap-treeview.min.css}" rel="stylesheet">
+
+    <style type="text/css">
+        th, td {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/index}">厦门随心版后台管理系统</a>
+        </div>
+        <!-- /.navbar-header -->
+
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li shiro:hasRole="营销活动管理">
+                        <a href="#"><i class="fa fa-th-large fa-fw"></i> 营销活动管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a th:href="@{/activity/activity}">活动管理</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/activity/goods}">商品管理</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/activity/product}">产品管理</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/activity/filter}">用户过滤名单</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/activity/statistics}">统计</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    <li shiro:hasRole="互动弹窗管理">
+                        <a href="#"><i class="fa fa-cubes fa-fw"></i> 互动弹窗管理<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a th:href="@{/window/mould}">模板管理</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/window/statistics}">统计</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li shiro:hasRole="用户管理">
+                        <a th:href="@{/manager}"><i class="fa fa-user fa-fw"></i> 用户管理</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.sidebar-collapse -->
+        </div>
+        <!-- /.navbar-static-side -->
+    </nav>
+
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="page-header">活动管理</h3>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        活动列表
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <table width="100%" class="table table-striped table-bordered table-hover"
+                               id="activityDataTable">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>活动编号</th>
+                                <th>活动名称</th>
+                                <th>活动类型</th>
+                                <th>活动类型en</th>
+                                <th>活动促销类别</th>
+                                <th>活动促销类别en</th>
+                                <th>活动商品名称</th>
+                                <th>是否上线</th>
+                                <th>生效时间</th>
+                                <th>失效时间</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="info:${list}">
+                                <td th:text="${info.id}"></td>
+                                <td th:text="${info.code}"></td>
+                                <td th:text="${info.name}"></td>
+                                <td th:text="${info.type}"></td>
+                                <td th:text="${info.enType}"></td>
+                                <td th:text="${info.category}"></td>
+                                <td th:text="${info.enCategory}"></td>
+                                <td th:text="${info.goodsName}"></td>
+                                <td th:text="${info.publish}"></td>
+                                <td th:text="${info.effectiveDate}"></td>
+                                <td th:text="${info.expireDate}"></td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+        <!--新增活动-->
+        <!-- Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                onclick="addActivityFormReset()">&times;
+                        </button>
+                        <h4 class="modal-title" id="add-combo-modal-title">添加活动</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form role="form" id="add_activity_form">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>*活动类型:</label>
+                                        <select class="form-control" id="add_activity_type">
+                                            <option value="type1">体验活动</option>
+                                            <option value="type2">体验到期续订活动</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*活动名称:</label>
+                                        <input class="form-control" id="add_activity_name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*活动编号</label>
+                                        <input class="form-control" id="add_activity_code">
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>*活动商品:</label>
+                                        <select class="form-control" id="add_activity_goods">
+                                            <option value=""> 请选择</option>
+                                            <option th:each="info:${goods}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*活动促销类别:</label>
+                                        <select class="form-control" id="add_activity_category">
+                                            <option value="">请选择</option>
+                                            <option value="category1">促销</option>
+                                            <option value="category2">免费</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>*弹窗内容:</label>
+                                        <textarea class="form-control" rows="3" id="add_activity_introduce"
+                                                  maxlength="254"></textarea>
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <!--以上为活动公共信息-->
+
+                                <!-- 类型1字段信息-->
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>*生效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text"
+                                                   class="form-control activity-time-select add_effectiveDate"
+                                                   id="add_activity_type1_effectiveDate" name="effectiveDate">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>*失效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text" class="form-control activity-time-select add_expireDate"
+                                                   id="add_activity_type1_expireDate" name="expireDate">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>用户必须已订购信息校验类型:</label>
+                                        <select class="form-control" id="add_activity_type1_mustOrderType">
+                                            <option value="product">产品</option>
+                                            <option value="goods">商品</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="add_activity_type1_mustOrder_product_div"
+                                         style="display: block">
+                                        <label>用户必须已订购下列产品:</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="add_activity_type1_mustOrder_product" multiple="multiple">
+                                            <option th:each="info:${product}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="add_activity_type1_mustOrder_goods_div"
+                                         style="display: none">
+                                        <label>用户必须已订购下列商品:</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="add_activity_type1_mustOrder_goods" multiple="multiple">
+                                            <option th:each="info:${goods}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>必须已订购<span
+                                                class="add_activity_type1_checkMustOrderMode">产品</span>校验方式:</label>
+                                        <select class="form-control" id="add_activity_type1_checkMustOrderMode">
+                                            <option value="and">全部</option>
+                                            <option value="or">其中一个</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>用户必须未订购信息校验类型:</label>
+                                        <select class="form-control" id="add_activity_type1_mustNotOrderType">
+                                            <option value="product">产品</option>
+                                            <option value="goods">商品</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="add_activity_type1_mustNotOrder_product_div"
+                                         style="display: block">
+                                        <label>用户必须未订购下列产品:</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="add_activity_type1_mustNotOrder_product" multiple="multiple">
+                                            <option th:each="info:${product}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="add_activity_type1_mustNotOrder_goods_div"
+                                         style="display: none">
+                                        <label>用户必须未订购下列商品</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="add_activity_type1_mustNotOrder_goods" multiple="multiple">
+                                            <option th:each="info:${goods}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>必须未订购<span class="add_activity_type1_checkMustNotOrderMode">产品</span>校验方式:</label>
+                                        <select class="form-control" id="add_activity_type1_checkMustNotOrderMode">
+                                            <option value="and">全部</option>
+                                            <option value="or">其中一个</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>体验活动参与次数不得超过（次）:</label>
+                                        <input class="form-control" id="add_activity_type1_maxType1JoinTimes">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>*订购时间</label>
+                                        <select class="form-control"
+                                                id="add_activity_type1_orderLength">
+                                            <option value="1">1个月</option>
+                                            <option value="2">2个月</option>
+                                            <option value="3">3个月</option>
+                                            <option value="6">半年</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>是否开启用户过滤名单</label>
+                                        <select class="form-control" id="add_activity_type1_openFilter">
+                                            <option value="true">是</option>
+                                            <option value="false">否</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 add_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>是否开启参与限额</label>
+                                        <select class="form-control" id="add_activity_type1_openLimit">
+                                            <option value="false">否</option>
+                                            <option value="true">是</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="add_activity_type1" style="display: block">
+                                    <div class="add_activity_type1_openLimit_yes" style="display: none">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>每日订购限额数量</label>
+                                                <input class="form-control" id="add_activity_type1_limitNumber">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>是否开启区域参与限额</label>
+                                                <select class="form-control" id="add_activity_type1_limitByArea">
+                                                    <option value="false">否</option>
+                                                    <option value="true">是</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.类型1字段信息-->
+
+                                <!--类型2字段信息-->
+                                <div class="col-lg-6 add_activity_type2" style="display: none">
+                                    <div class="form-group">
+                                        <label>*关联体验活动</label>
+                                        <select class="form-control"
+                                                id="add_activity_type2_correlationType1ActivityId">
+                                            <option value="">请选择</option>
+                                            <option th:each="info:${type1List}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="display: none">
+                                        <label>*生效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text"
+                                                   class="form-control activity-time-select add_effectiveDate"
+                                                   id="add_activity_type2_effectiveDate" name="effectiveDate">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*失效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text" class="form-control activity-time-select add_expireDate"
+                                                   id="add_activity_type2_expireDate" name="expireDate">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>到期续订提前提醒天数</label>
+                                        <input class="form-control" id="add_activity_type2_advanceRemindDay">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="add_activity_type1" style="display: block">
+                            <div class="add_activity_type1_openLimit_yes">
+                                <div id="add_activity_type1_limitByArea_area_div" style="display: none">
+                                    <div style="padding-right: 15px; padding-left: 15px;">
+                                        <label>各分公司每日开通限额：</label>
+                                        <table width="100%" class="table table-striped table-bordered table-hover"
+                                               id="addAreaTable">
+                                            <thead>
+                                            <tr>
+                                                <th>分公司名称</th>
+                                                <th>开通限额</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr class="odd gradeX" th:each="info : ${areaList}">
+                                                <td>
+                                                    <input class="area-limit" type="hidden" th:value="${info.id}"
+                                                           name="areaId">
+                                                    <input class="area-limit" type="hidden" th:value="${info.areaName}"
+                                                           th:text="${info.areaName}"
+                                                           name="areaName">
+                                                </td>
+                                                <td><input class="form-control area-limit"
+                                                           type="text"
+                                                           name="areaLimitNumber">
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btn_add_activity">保存</button>
+                        <button type="reset" class="btn btn-default" onclick="addActivityFormReset()">重置</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal-->
+
+        <!--修改活动-->
+        <!-- Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                onclick="editActivityFormReset()">&times;
+                        </button>
+                        <h4 class="modal-title">修改活动</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <form role="form" id="edit_activity_form">
+                                <input style="display: none" id="edit_activity_id">
+                                <input style="display: none" id="edit_activity_type">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>*活动名称:</label>
+                                        <input class="form-control" id="edit_activity_name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*活动编号</label>
+                                        <input class="form-control" id="edit_activity_code">
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>*活动商品:</label>
+                                        <select class="form-control" id="edit_activity_goods">
+                                            <option value=""> 请选择</option>
+                                            <option th:each="info:${goods}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*活动促销类别:</label>
+                                        <select class="form-control" id="edit_activity_category">
+                                            <option value="">请选择</option>
+                                            <option value="category1">促销</option>
+                                            <option value="category2">免费</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>*弹窗内容:</label>
+                                        <textarea class="form-control" rows="3" id="edit_activity_introduce"
+                                                  maxlength="254"></textarea>
+                                    </div>
+                                </div>
+                                <!-- /.col-lg-6 (nested) -->
+                                <!--以上为活动公共信息-->
+
+                                <!--类型1字段信息-->
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>*生效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text" class="form-control activity-time-select"
+                                                   id="edit_activity_type1_effectiveDate" name="effectiveDate">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>*失效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text" class="form-control activity-time-select"
+                                                   id="edit_activity_type1_expireDate" name="expireDate">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>用户必须已订购信息校验类型:</label>
+                                        <select class="form-control" id="edit_activity_type1_mustOrderType">
+                                            <option value="product">产品</option>
+                                            <option value="goods">商品</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="edit_activity_type1_mustOrder_product_div"
+                                         style="display: block">
+                                        <label>用户必须已订购下列产品:</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="edit_activity_type1_mustOrder_product" multiple="multiple">
+                                            <option th:each="info:${product}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="edit_activity_type1_mustOrder_goods_div"
+                                         style="display: none">
+                                        <label>用户必须已订购下列商品:</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="edit_activity_type1_mustOrder_goods" multiple="multiple">
+                                            <option th:each="info:${goods}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>必须已订购<span class="edit_activity_type1_checkMustOrderMode">产品</span>校验方式:</label>
+                                        <select class="form-control" id="edit_activity_type1_checkMustOrderMode">
+                                            <option value="and">全部</option>
+                                            <option value="or">其中一个</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>用户必须未订购信息校验类型:</label>
+                                        <select class="form-control" id="edit_activity_type1_mustNotOrderType">
+                                            <option value="product">产品</option>
+                                            <option value="goods">商品</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="edit_activity_type1_mustNotOrder_product_div"
+                                         style="display: block">
+                                        <label>用户必须未订购下列产品:</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="edit_activity_type1_mustNotOrder_product" multiple="multiple">
+                                            <option th:each="info:${product}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="edit_activity_type1_mustNotOrder_goods_div"
+                                         style="display: none">
+                                        <label>用户必须未订购下列商品</label><br>
+                                        <select class="form-control type1_checkOrder_select_multiple"
+                                                id="edit_activity_type1_mustNotOrder_goods" multiple="multiple">
+                                            <option th:each="info:${goods}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>必须未订购<span class="edit_activity_type1_checkMustNotOrderMode">产品</span>校验方式:</label>
+                                        <select class="form-control" id="edit_activity_type1_checkMustNotOrderMode">
+                                            <option value="and">全部</option>
+                                            <option value="or">其中一个</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>体验活动参与次数不得超过（次）:</label>
+                                        <input class="form-control" id="edit_activity_type1_maxType1JoinTimes">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>*订购时间</label>
+                                        <select class="form-control"
+                                                id="edit_activity_type1_orderLength">
+                                            <option value="1">1个月</option>
+                                            <option value="2">2个月</option>
+                                            <option value="3">3个月</option>
+                                            <option value="6">半年</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>是否开启用户过滤名单</label>
+                                        <select class="form-control" id="edit_activity_type1_openFilter">
+                                            <option value="true">是</option>
+                                            <option value="false">否</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 edit_activity_type1" style="display: block">
+                                    <div class="form-group">
+                                        <label>是否开启参与限额</label>
+                                        <select class="form-control" id="edit_activity_type1_openLimit">
+                                            <option value="false">否</option>
+                                            <option value="true">是</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="edit_activity_type1" style="display: block">
+                                    <div class="edit_activity_type1_openLimit_yes" style="display: none">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>每日订购限额数量</label>
+                                                <input class="form-control" id="edit_activity_type1_limitNumber">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>是否开启区域参与限额</label>
+                                                <select class="form-control" id="edit_activity_type1_limitByArea">
+                                                    <option value="false">否</option>
+                                                    <option value="true">是</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.类型1字段信息-->
+
+                                <!--类型2字段信息-->
+                                <div class="col-lg-6 edit_activity_type2" style="display: none">
+                                    <div class="form-group">
+                                        <label>*关联体验活动</label>
+                                        <select class="form-control"
+                                                id="edit_activity_type2_correlationType1ActivityId">
+                                            <option value="">请选择</option>
+                                            <option th:each="info:${type1List}" th:value="${info.id}"
+                                                    th:text="${info.name}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="display: none">
+                                        <label>*生效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text" class="form-control activity-time-select"
+                                                   id="edit_activity_type2_effectiveDate" name="effectiveDate">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*失效时间:</label>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+                                            <input type="text" class="form-control activity-time-select"
+                                                   id="edit_activity_type2_expireDate" name="expireDate">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>到期续订提前提醒天数</label>
+                                        <input class="form-control" id="edit_activity_type2_advanceRemindDay">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="edit_activity_type1" style="display: block">
+                            <div class="edit_activity_type1_openLimit_yes">
+                                <div id="edit_activity_type1_limitByArea_area_div" style="display: none">
+                                    <div style="padding-right: 15px; padding-left: 15px;">
+                                        <label>各分公司每日开通限额：</label>
+                                        <table width="100%" class="table table-striped table-bordered table-hover"
+                                               id="editAreaTable">
+                                            <thead>
+                                            <tr>
+                                                <th>分公司ID</th>
+                                                <th>分公司名称</th>
+                                                <th>开通限额</th>
+                                                <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                                onclick="editActivityFormReset()">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btn_edit_combo">保存</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal-->
+
+        <!--优先级调整modal-->
+        <!-- Modal -->
+        <div class="row">
+            <div class="modal fade" id="sortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                            </button>
+                            <h4 class="modal-title">设置优先级</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div style="padding-right: 15px; padding-left: 15px;">
+                                    <table width="100%" class="table table-striped table-bordered table-hover"
+                                           id="priorityOrderDataTable" style="white-space: nowrap;">
+                                        <thead>
+                                        <tr>
+                                            <th>活动ID</th>
+                                            <th>活动名称</th>
+                                            <th>活动类型</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </div>
+        <!--/.modal-->
+
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div align="center">
+                    <button data-toggle='modal' data-target='#addModal' type="button" class="btn btn-primary">添加活动
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btn_priority_sort" data-toggle="modal"
+                            data-target="#sortModal">调整上线活动优先级
+                    </button>
+                </div>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/vendor/jquery/jquery.js}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script th:src="@{/vendor/bootstrap/js/bootstrap.js}"></script>
+
+<!-- Metis Menu Plugin JavaScript -->
+<script th:src="@{/vendor/metisMenu/metisMenu.js}"></script>
+
+<!-- DataTables JavaScript -->
+<script th:src="@{/vendor/datatables/js/jquery.dataTables.js}"></script>
+<script th:src="@{/vendor/datatables-plugins/dataTables.bootstrap.js}"></script>
+<script th:src="@{/vendor/datatables-responsive/dataTables.responsive.js}"></script>
+
+<!-- date-range-picker -->
+<script th:src="@{/bower_components/moment/min/moment.min.js}"></script>
+<script th:src="@{/bower_components/bootstrap-daterangepicker/daterangepicker.js}"></script>
+<!-- bootstrap datepicker -->
+<script th:src="@{/bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js}"></script>
+<script th:src="@{/bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.zh-CN.js}"></script>
+
+<!-- bootstrap datepicker -->
+<script th:src="@{/bower_components/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js}"></script>
+<script th:src="@{/bower_components/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
+
+<!--bootstrap-treeview-->
+<script th:src="@{/dist/bootstrap-treeview.min.js}"></script>
+
+<!--multiselect-->
+<script th:src="@{/bower_components/bootstrap-multiselect/js/bootstrap-multiselect.js}"></script>
+
+<!-- Custom Theme JavaScript -->
+<script th:src="@{/dist/js/sb-admin-2.js}"></script>
+
+<!-- Page-Level Demo Scripts - Tables - Use for reference -->
+<script th:inline="javascript">
+    $(document).ready(function () {
+        // 校验数字输入正则，0和非0开头的数字
+        var reg = /^(0|[1-9][0-9]*)$/;
+
+        // 活动1和活动2添加框切换
+        $("#add_activity_type").change(function () {
+            if ("type1" == $(this).val()) {
+                $(".add_activity_type1").attr("style", "display: block");
+                $(".add_activity_type2").attr("style", "display: none");
+            }
+            if ("type2" == $(this).val()) {
+                $(".add_activity_type1").attr("style", "display: none");
+                $(".add_activity_type2").attr("style", "display: block");
+            }
+        });
+
+        $("#add_activity_type1_mustOrderType").change(function () {
+            if ("product" == $(this).val()) {
+                $("#add_activity_type1_mustOrder_product_div").attr("style", "display: block");
+                $("#add_activity_type1_mustOrder_goods_div").attr("style", "display: none");
+                $(".add_activity_type1_checkMustOrderMode").html("产品");
+            }
+            if ("goods" == $(this).val()) {
+                $("#add_activity_type1_mustOrder_product_div").attr("style", "display: none");
+                $("#add_activity_type1_mustOrder_goods_div").attr("style", "display: block");
+                $(".add_activity_type1_checkMustOrderMode").html("商品");
+            }
+        });
+
+        $("#add_activity_type1_mustNotOrderType").change(function () {
+            if ("product" == $(this).val()) {
+                $("#add_activity_type1_mustNotOrder_product_div").attr("style", "display: block");
+                $("#add_activity_type1_mustNotOrder_goods_div").attr("style", "display: none");
+                $(".add_activity_type1_checkMustNotOrderMode").html("产品");
+            }
+            if ("goods" == $(this).val()) {
+                $("#add_activity_type1_mustNotOrder_product_div").attr("style", "display: none");
+                $("#add_activity_type1_mustNotOrder_goods_div").attr("style", "display: block");
+                $(".add_activity_type1_checkMustNotOrderMode").html("商品");
+            }
+        });
+
+        $("#edit_activity_type1_mustOrderType").change(function () {
+            if ("product" == $(this).val()) {
+                $("#edit_activity_type1_mustOrder_product_div").attr("style", "display: block");
+                $("#edit_activity_type1_mustOrder_goods_div").attr("style", "display: none");
+                $(".edit_activity_type1_checkMustOrderMode").html("产品");
+            }
+            if ("goods" == $(this).val()) {
+                $("#edit_activity_type1_mustOrder_product_div").attr("style", "display: none");
+                $("#edit_activity_type1_mustOrder_goods_div").attr("style", "display: block");
+                $(".edit_activity_type1_checkMustOrderMode").html("商品");
+            }
+        });
+
+        $("#edit_activity_type1_mustNotOrderType").change(function () {
+            if ("product" == $(this).val()) {
+                $("#edit_activity_type1_mustNotOrder_product_div").attr("style", "display: block");
+                $("#edit_activity_type1_mustNotOrder_goods_div").attr("style", "display: none");
+                $(".edit_activity_type1_checkMustNotOrderMode").html("产品");
+            }
+            if ("goods" == $(this).val()) {
+                $("#edit_activity_type1_mustNotOrder_product_div").attr("style", "display: none");
+                $("#edit_activity_type1_mustNotOrder_goods_div").attr("style", "display: block");
+                $(".edit_activity_type1_checkMustNotOrderMode").html("商品");
+            }
+        });
+
+        $("#add_activity_type1_mustNotOrderType").change(function () {
+            if ("product" == $(this).val()) {
+                $("#add_activity_type1_mustNotOrder_product_div").attr("style", "display: block");
+                $("#add_activity_type1_mustNotOrder_goods_div").attr("style", "display: none");
+                $(".add_activity_type1_checkMustNotOrderMode").html("产品");
+            }
+            if ("goods" == $(this).val()) {
+                $("#add_activity_type1_mustNotOrder_product_div").attr("style", "display: none");
+                $("#add_activity_type1_mustNotOrder_goods_div").attr("style", "display: block");
+                $(".add_activity_type1_checkMustNotOrderMode").html("商品");
+            }
+        });
+
+        $("#add_activity_type1_openLimit").change(function () {
+            if ("true" == $(this).val()) {
+                $(".add_activity_type1_openLimit_yes").attr("style", "display: block");
+            } else {
+                $(".add_activity_type1_openLimit_yes").attr("style", "display: none");
+                $("#add_activity_type1_limitNumber").val("");
+                $("#add_activity_type1_limitByArea").val("false");
+                $("#add_activity_type1_limitByArea_area_div").attr("style", "display: none");
+            }
+        });
+
+        $("#edit_activity_type1_openLimit").change(function () {
+            if ("true" == $(this).val()) {
+                $(".edit_activity_type1_openLimit_yes").attr("style", "display: block");
+            } else {
+                $(".edit_activity_type1_openLimit_yes").attr("style", "display: none");
+                $("#edit_activity_type1_limitNumber").val("");
+                $("#edit_activity_type1_limitByArea").val("false");
+                $("#edit_activity_type1_limitByArea_area_div").attr("style", "display: none");
+            }
+        });
+
+        $("#add_activity_type1_limitByArea").change(function () {
+            if ("true" == $(this).val()) {
+                $("#add_activity_type1_limitByArea_area_div").attr("style", "display: block");
+            } else {
+                $("#add_activity_type1_limitByArea_area_div").attr("style", "display: none");
+            }
+        });
+
+        $("#edit_activity_type1_limitByArea").change(function () {
+            if ("true" == $(this).val()) {
+                $("#edit_activity_type1_limitByArea_area_div").attr("style", "display: block");
+            } else {
+                $("#edit_activity_type1_limitByArea_area_div").attr("style", "display: none");
+            }
+        });
+
+        // 添加框初始化时间
+        $('#addModal').on('shown.bs.modal', function () {
+            $(".add_effectiveDate").datepicker('setDate', getCurrentTime());
+            $(".add_expireDate").datepicker('setDate', '2500-12-31');
+        });
+
+        // 已订购/未订购选择为互斥选择
+        $('.type1_checkOrder_select_multiple').multiselect({
+            nonSelectedText: '请选择',
+            allSelectedText: '全部',
+            nSelectedText: '项已选',
+            onChange: function (option, checked) {
+                var selectId = $(option).parent().attr("id");
+                if (checked) {
+                    var anotherSelectId;
+                    if (selectId.search("mustNot") == -1) {
+                        anotherSelectId = selectId.replace("must", "mustNot");
+                    } else {
+                        anotherSelectId = selectId.replace("mustNot", "must");
+                    }
+                    $("#" + anotherSelectId).multiselect('deselect', $(option).val());
+                }
+            }
+        });
+
+        var languageUrl = ["/json/dataTables.chinese.lang.json"];
+        var table = $('#activityDataTable').DataTable({
+            responsive: false,
+            language: {
+                "url": languageUrl
+            },
+            searching: false,
+            scrollX: true,
+            scrollCollapse: true,
+            autoWidth: false,
+            columns: [
+                {"data": "id"},
+                {"data": "code"},
+                {"data": "name"},
+                {"data": "type"},
+                {"data": "enType"},
+                {"data": "category"},
+                {"data": "enCategory"},
+                {"data": "goodsName"},
+                {"data": "publish"},
+                {"data": "effectiveDate"},
+                {"data": "expireDate"},
+                {
+                    "data": null,
+                    "title": "操作",
+                    "defaultContent": "<button class='publish-btn' type='button'>上/下线</button> &nbsp;&nbsp;&nbsp; <button class='edit-btn' type='button'>修改</button> &nbsp;&nbsp;&nbsp; <button class='delete-btn' type='button'>删除</button> ",
+                    "width": "150px"
+                }
+            ],
+            columnDefs: [
+                {
+                    "targets": [0, 4, 6],
+                    "visible": false
+                }
+            ]
+        });
+
+        // 打印表格行数据
+        $('#activityDataTable tbody').on('click', 'tr', function () {
+            console.log(table.row(this).data());
+        });
+
+        // 设置时间选择器
+        $('.activity-time-select').datepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            autoclose: true,
+            minDate: new Date()
+        });
+
+        // 添加套餐
+        $('#btn_add_activity').on('click', function () {
+            var type = $("#add_activity_type").val();
+            var name = $("#add_activity_name").val();
+            var code = $("#add_activity_code").val();
+            var goodsId = $("#add_activity_goods").val();
+            var category = $("#add_activity_category").val();
+            var introduce = $("#add_activity_introduce").val();
+            var data = {};
+            var effectiveDate;
+            var expireDate;
+            if (type == "type1") {
+                effectiveDate = $("#add_activity_type1_effectiveDate").val();
+                expireDate = $("#add_activity_type1_expireDate").val();
+                var maxType1JoinTimes = $("#add_activity_type1_maxType1JoinTimes").val();
+                if ("" != maxType1JoinTimes && !reg.test(maxType1JoinTimes)) {
+                    alert("体验活动参与次数限制请输入正确的数字");
+                    return;
+                }
+                var mustOrderType = $("#add_activity_type1_mustOrderType").val();
+                var mustOrderInfo = "";
+                if (mustOrderType == "product") {
+                    mustOrderInfo = $("#add_activity_type1_mustOrder_product").val();
+                } else if (mustOrderType == "goods") {
+                    mustOrderInfo = $("#add_activity_type1_mustOrder_goods").val();
+                }
+                var checkMustOrderMode = $("#add_activity_type1_checkMustOrderMode").val();
+                var mustNotOrderType = $("#add_activity_type1_mustNotOrderType").val();
+                var mustNotOrderInfo = "";
+                if (mustNotOrderType == "product") {
+                    mustNotOrderInfo = $("#add_activity_type1_mustNotOrder_product").val();
+                } else if (mustNotOrderType == "goods") {
+                    mustNotOrderInfo = $("#add_activity_type1_mustNotOrder_goods").val();
+                }
+                var checkMustNotOrderMode = $("#add_activity_type1_checkMustNotOrderMode").val();
+                var openLimit = $("#add_activity_type1_openLimit").val();
+                var limitNumber = $("#add_activity_type1_limitNumber").val();
+                if ("true" == openLimit) {
+                    if ("" == limitNumber) {
+                        alert("请输入限额总数");
+                        return;
+                    }
+                    if ("" != limitNumber && !reg.test(limitNumber)) {
+                        alert("请输入正确的限额数字");
+                        return;
+                    }
+                } else {
+                    limitNumber = 0;
+                }
+                var limitByArea = $("#add_activity_type1_limitByArea").val();
+                var areaLimit = [];
+                if ("true" == limitByArea) {
+                    var index = 0;
+                    var flag = true;
+                    $("#addAreaTable").find('.gradeX').each(function () {
+                        var limit = {};
+                        $(this).find('td').each(function () {
+                            $(this).find(".area-limit").each(function () {
+                                limit[$(this).attr("name")] = $(this).val();
+                            });
+                        });
+                        var areaLimitNumber = limit['areaLimitNumber'];
+                        if (!reg.test(areaLimitNumber)) {
+                            alert(limit['areaName'] + "限额数量请输入正确的数字");
+                            flag = false;
+                        }
+                        areaLimit[index] = limit;
+                        index++;
+                    });
+                    if (!flag) {
+                        return;
+                    }
+                }
+                var openFilter = $("#add_activity_type1_openFilter").val();
+                var orderLength = $("#add_activity_type1_orderLength").val();
+                data = {
+                    'type': type,
+                    'category': category,
+                    'name': name,
+                    'code': code,
+                    'goodsId': goodsId,
+                    'introduce': introduce,
+                    'effectiveDate': effectiveDate,
+                    'expireDate': expireDate,
+                    'maxType1JoinTimes': maxType1JoinTimes,
+                    'mustOrderType': mustOrderType,
+                    'mustOrderInfo': mustOrderInfo,
+                    'checkMustOrderMode': checkMustOrderMode,
+                    'mustNotOrderType': mustNotOrderType,
+                    'mustNotOrderInfo': mustNotOrderInfo,
+                    'checkMustNotOrderMode': checkMustNotOrderMode,
+                    'openLimit': openLimit,
+                    'limitNumber': limitNumber,
+                    'limitByArea': limitByArea,
+                    'areaLimit': areaLimit,
+                    'openFilter': openFilter,
+                    'orderLength': orderLength
+                };
+            } else if (type == "type2") {
+                var correlationType1ActivityId = $("#add_activity_type2_correlationType1ActivityId").val();
+                var advanceRemindDay = $("#add_activity_type2_advanceRemindDay").val();
+                effectiveDate = $("#add_activity_type2_effectiveDate").val();
+                expireDate = $("#add_activity_type2_expireDate").val();
+                if ("" != advanceRemindDay && !reg.test(advanceRemindDay)) {
+                    alert("到期续订提前提醒天数请输入正确的数字");
+                    return;
+                }
+
+                data = {
+                    'type': type,
+                    'category': category,
+                    'name': name,
+                    'code': code,
+                    'goodsId': goodsId,
+                    'introduce': introduce,
+                    'effectiveDate': effectiveDate,
+                    'expireDate': expireDate,
+                    'correlationType1ActivityId': correlationType1ActivityId,
+                    'advanceRemindDay': advanceRemindDay
+                };
+            }
+            console.log(JSON.stringify(data));
+            var postUrl = "/activity/activity/" + type;
+            $.ajax({
+                "url": [postUrl],
+                "data": JSON.stringify(data),
+                "contentType": "application/json",
+                "type": "POST",
+                "error": function () {
+                    alert("服务器未正常响应，请重试");
+                },
+                "success": function (response) {
+                    console.log(response);
+                    if (response.data) {
+                        alert("添加成功");
+                        window.location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        // 点击上下线按钮
+        $("#activityDataTable").on("click", ".publish-btn", function () {
+            var row = table.row($(this).parents("tr"));
+            var data = row.data();
+            var name = data.name;
+            var publish = data.publish;
+            var operation = "undefined";
+            var message = "是否进行上下线操作";
+            if ("上线" == publish) {
+                message = "活动" + name + "当前状态为" + publish + "，是否继续操作下线?";
+                operation = "down";
+            } else if ("下线" == publish) {
+                message = "活动" + name + "当前状态为" + publish + "，是否继续操作上线?";
+                operation = "up";
+            }
+            var pub = confirm(message);
+            var pubUrl = "/activity/activity/publish/" + operation + "/" + data.id;
+            if (pub) {
+                $.ajax({
+                    "url": [pubUrl],
+                    "contentType": "application/json",
+                    "type": "POST",
+                    "error": function () {
+                        alert("服务器未正常响应，请重试");
+                    },
+                    "success": function (response) {
+                        if (response.data) {
+                            alert("操作成功");
+                            window.location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        });
+
+        // 点击修改按钮
+        $("#activityDataTable tbody").on("click", ".edit-btn", function () {
+            var row = table.row($(this).parents("tr"));
+            var data = row.data();
+            var type = data.enType;
+            var id = data.id;
+            var activityInfo = {};
+            var getInfoUrl = "/activity/activity/" + type + "/" + id;
+            $.ajax({
+                "url": [getInfoUrl],
+                "type": "GET",
+                "contentType": "application/data",
+                "error": function () {
+                    alert("服务器未正常响应，请重试");
+                },
+                "success": function (response) {
+                    if (response.code == "000") {
+                        activityInfo = response.data;
+                        // 显示修改框
+                        $('#editModal').modal('show');
+                        console.log(activityInfo);
+                        fillEditModal(activityInfo);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        // 修改活动时点击修改分公司的活动限额按钮
+        $("#editAreaTable tbody").on("click", ".edit-btn", function () {
+            var row = $("#editAreaTable").DataTable().row($(this).parents("tr"));
+            var data = row.data();
+            var tds = $(this).parents("tr").children();
+            $.each(tds, function (i, val) {
+                var td = $(val);
+                if (i < 2 || td.has('button').length) {
+                    return true;
+                }//跳过第1项 序号,按钮
+                var html;
+                if (i == 2) {
+                    html = $("<input class='form-control' name='areaLimitNumber'>");
+                    html.val(td.text());
+                    td.html(html);
+                }
+            });
+            $(this).html("保存");
+            $(this).toggleClass("edit-btn");
+            $(this).toggleClass("save-btn");
+        });
+
+        // 修改活动时点击保存修改分公司的活动限额按钮
+        $("#editAreaTable tbody").on("click", ".save-btn", function () {
+            var tds = $(this).parents("tr").children();
+            $.each(tds, function (i, val) {
+                var td = $(val);
+                //把input变为字符串
+                if (!td.has('button').length && i > 1) {
+                    var txt = td.children(".form-control").val();
+                    td.html(txt);
+                    $("#editAreaTable").DataTable().cell(td).data(txt);//修改DataTables对象的数据
+                }
+            });
+            $(this).html("编辑");
+            $(this).toggleClass("edit-btn");
+            $(this).toggleClass("save-btn");
+        });
+
+        // 修改活动
+        $('#btn_edit_combo').on('click', function () {
+            var id = $("#edit_activity_id").val();
+            var type = $("#edit_activity_type").val();
+            var name = $("#edit_activity_name").val();
+            var code = $("#edit_activity_code").val();
+            var goodsId = $("#edit_activity_goods").val();
+            var category = $("#edit_activity_category").val();
+            var introduce = $("#edit_activity_introduce").val();
+            var data = {};
+            var effectiveDate;
+            var expireDate;
+            if (type == "type1") {
+                effectiveDate = $("#edit_activity_type1_effectiveDate").val();
+                expireDate = $("#edit_activity_type1_expireDate").val();
+                var maxType1JoinTimes = $("#edit_activity_type1_maxType1JoinTimes").val();
+                if ("" != maxType1JoinTimes && !reg.test(maxType1JoinTimes)) {
+                    alert("体验活动参与次数限制请输入正确的数字");
+                    return;
+                }
+                var mustOrderType = $("#edit_activity_type1_mustOrderType").val();
+                var mustOrderInfo = "";
+                if (mustOrderType == "product") {
+                    mustOrderInfo = $("#edit_activity_type1_mustOrder_product").val();
+                } else if (mustOrderType == "goods") {
+                    mustOrderInfo = $("#edit_activity_type1_mustOrder_goods").val();
+                }
+                var checkMustOrderMode = $("#edit_activity_type1_checkMustOrderMode").val();
+                var mustNotOrderType = $("#edit_activity_type1_mustNotOrderType").val();
+                var mustNotOrderInfo = "";
+                if (mustNotOrderType == "product") {
+                    mustNotOrderInfo = $("#edit_activity_type1_mustNotOrder_product").val();
+                } else if (mustNotOrderType == "goods") {
+                    mustNotOrderInfo = $("#edit_activity_type1_mustNotOrder_goods").val();
+                }
+                var checkMustNotOrderMode = $("#edit_activity_type1_checkMustNotOrderMode").val();
+                var openLimit = $("#edit_activity_type1_openLimit").val();
+                var limitNumber = $("#edit_activity_type1_limitNumber").val();
+                if ("true" == openLimit) {
+                    if ("" == limitNumber) {
+                        alert("请输入限额总数");
+                        return;
+                    }
+                    if ("" != limitNumber && !reg.test(limitNumber)) {
+                        alert("请输入正确的限额数字");
+                        return;
+                    }
+                } else {
+                    limitNumber = 0;
+                }
+                var limitByArea = $("#edit_activity_type1_limitByArea").val();
+                var areaLimit = [];
+                if ("true" == limitByArea) {
+                    var index = 0;
+                    var flag = true;
+                    var rows = $('#editAreaTable').DataTable().rows().data();
+                    for (var i = 0; i < rows.length; i++) {
+                        var limitInfo = rows[i];
+                        console.log(limitInfo);
+                        var areaLimitNumber = limitInfo['areaLimitNumber'];
+                        if (!reg.test(areaLimitNumber)) {
+                            alert(limitInfo['areaName'] + "限额数量请输入正确的数字");
+                            flag = false;
+                        }
+                        areaLimit[index] = limitInfo;
+                        index++;
+                    }
+                    if (!flag) {
+                        return;
+                    }
+                }
+                var openFilter = $("#edit_activity_type1_openFilter").val();
+                var orderLength = $("#edit_activity_type1_orderLength").val();
+                data = {
+                    'type': type,
+                    'category': category,
+                    'name': name,
+                    'code': code,
+                    'goodsId': goodsId,
+                    'introduce': introduce,
+                    'effectiveDate': effectiveDate,
+                    'expireDate': expireDate,
+                    'maxType1JoinTimes': maxType1JoinTimes,
+                    'mustOrderType': mustOrderType,
+                    'mustOrderInfo': mustOrderInfo,
+                    'checkMustOrderMode': checkMustOrderMode,
+                    'mustNotOrderType': mustNotOrderType,
+                    'mustNotOrderInfo': mustNotOrderInfo,
+                    'checkMustNotOrderMode': checkMustNotOrderMode,
+                    'openLimit': openLimit,
+                    'limitNumber': limitNumber,
+                    'limitByArea': limitByArea,
+                    'areaLimit': areaLimit,
+                    'openFilter': openFilter,
+                    'orderLength': orderLength
+                };
+            } else if (type == "type2") {
+                var correlationType1ActivityId = $("#edit_activity_type2_correlationType1ActivityId").val();
+                var advanceRemindDay = $("#edit_activity_type2_advanceRemindDay").val();
+                effectiveDate = $("#edit_activity_type2_effectiveDate").val();
+                expireDate = $("#edit_activity_type2_expireDate").val();
+                if ("" != advanceRemindDay && !reg.test(advanceRemindDay)) {
+                    alert("到期续订提前提醒天数请输入正确的数字");
+                    return;
+                }
+                data = {
+                    'type': type,
+                    'category': category,
+                    'name': name,
+                    'code': code,
+                    'goodsId': goodsId,
+                    'introduce': introduce,
+                    'effectiveDate': effectiveDate,
+                    'expireDate': expireDate,
+                    'correlationType1ActivityId': correlationType1ActivityId,
+                    'advanceRemindDay': advanceRemindDay
+                };
+            }
+            console.log(JSON.stringify(data));
+            var putUrl = "/activity/activity/" + type + "/" + id;
+            $.ajax({
+                "url": [putUrl],
+                "data": JSON.stringify(data),
+                "contentType": "application/json",
+                "type": "PUT",
+                "error": function () {
+                    alert("服务器未正常响应，请重试");
+                },
+                "success": function (response) {
+                    console.log(response);
+                    if (response.data) {
+                        alert("修改成功");
+                        window.location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
+
+        // 点击删除按钮
+        $("#activityDataTable tbody").on("click", ".delete-btn", function () {
+            var row = table.row($(this).parents("tr"));
+            var data = row.data();
+            var type = data.enType;
+            var delUrl = "/activity/activity/" + type + "/" + data.id;
+            var del = confirm("是否删除该活动");
+            if (del) {
+                $.ajax({
+                    "url": [delUrl],
+                    "contentType": "application/json",
+                    "type": "DELETE",
+                    "error": function () {
+                        alert("服务器未正常响应，请重试");
+                    },
+                    "success": function (response) {
+                        if (response.data) {
+                            alert("删除成功");
+                            window.location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        });
+
+        // 点击优先级排序按钮
+        $('#btn_priority_sort').on('click', function () {
+            if ($("#priorityOrderDataTable").hasClass('dataTable')) {
+                $('#priorityOrderDataTable').dataTable().fnDestroy();
+            }
+            var queryUrl = "/activity/activity/online";
+            $("#priorityOrderDataTable").DataTable({
+                destroy: true,
+                responsive: true,
+                language: {
+                    "url": languageUrl
+                },
+                serverSide: true,
+                searching: false,
+                ajax: {
+                    url: [queryUrl]
+                },
+                paging: false,
+                ordering: false,
+                autoWidth: true,
+                columns: [
+                    {"data": "id"},
+                    {"data": "name"},
+                    {"data": "type"},
+                    {
+                        "data": null,
+                        "title": "排序",
+                        "defaultContent": "<button class='order-btn' type='button' onclick='priorityClick(this)'>上移</button> &nbsp;&nbsp;&nbsp; <button class='order-btn' type='button' onclick='priorityClick(this)'>下移</button>"
+                    }
+                ]
+            });
+        });
+
+    });
+
+    // 重置添加框
+    function addActivityFormReset() {
+        $('#add_activity_form')[0].reset();
+        $(".add_activity_type1").attr("style", "display: block");
+        $(".add_activity_type2").attr("style", "display: none");
+        $(".add_activity_type1_openLimit_yes").attr("style", "display: none");
+        $("#add_activity_type1_limitByArea_area_div").attr("style", "display: none");
+        $(".type1_checkOrder_select_multiple").multiselect('deselectAll', false);
+        $(".type1_checkOrder_select_multiple").multiselect('updateButtonText');
+        $(".add_effectiveDate").datepicker('setDate', getCurrentTime());
+        $(".add_expireDate").datepicker('setDate', '2500-12-31');
+        var nos = $(".area-limit");
+        $.each(nos, function (i, val) {
+            $(val).val("");
+        });
+    }
+
+    // 重置修改框
+    function editActivityFormReset() {
+        $('#edit_activity_form')[0].reset();
+        $(".type1_checkOrder_select_multiple").multiselect('deselectAll', false);
+        $(".type1_checkOrder_select_multiple").multiselect('updateButtonText');
+        $("#edit_activity_type1_limitByArea_area_div").attr("style", "display: none");
+    }
+
+    // 填充修改框数据
+    function fillEditModal(data) {
+        editActivityFormReset();
+        $("#edit_activity_id").val(data.id);
+        $("#edit_activity_code").val(data.code);
+        $("#edit_activity_type").val(data.enType);
+        $("#edit_activity_category").val(data.enCategory);
+        $("#edit_activity_name").val(data.name);
+        $("#edit_activity_introduce").val(data.introduce);
+        $("#edit_activity_goods").val(data.goodsId);
+        if (data.enType == "type1") {
+            $(".edit_activity_type1").attr("style", "display: block");
+            $(".edit_activity_type2").attr("style", "display: none");
+            $("#edit_activity_type1_effectiveDate").datepicker('setDate', data.effectiveDate.substr(0, 10));
+            $("#edit_activity_type1_expireDate").datepicker('setDate', data.expireDate.substr(0, 10));
+            $("#edit_activity_type1_maxType1JoinTimes").val(data.maxType1JoinTimes);
+            $("#edit_activity_type1_mustOrderType").val(data.mustOrderType);
+            if (data.mustOrderType == "product") {
+                $("#edit_activity_type1_mustOrder_goods_div").attr("style", "display: none");
+                $("#edit_activity_type1_mustOrder_product_div").attr("style", "display: block");
+                $("#edit_activity_type1_mustOrder_product").multiselect('select', data.mustOrderInfo);
+                $(".edit_activity_type1_checkMustOrderMode").html("产品")
+            }
+            if (data.mustOrderType == "goods") {
+                $("#edit_activity_type1_mustOrder_goods_div").attr("style", "display: block");
+                $("#edit_activity_type1_mustOrder_product_div").attr("style", "display: none");
+                $("#edit_activity_type1_mustOrder_goods").multiselect('select', data.mustOrderInfo);
+                $(".edit_activity_type1_checkMustOrderMode").html("商品")
+            }
+            $("#edit_activity_type1_mustNotOrderType").val(data.mustNotOrderType);
+            if (data.mustNotOrderType == "product") {
+                $("#edit_activity_type1_mustNotOrder_goods_div").attr("style", "display: none");
+                $("#edit_activity_type1_mustNotOrder_product_div").attr("style", "display: block");
+                $("#edit_activity_type1_mustNotOrder_product").multiselect('select', data.mustNotOrderInfo);
+                $(".edit_activity_type1_checkMustOrderMode").html("产品")
+            }
+            if (data.mustNotOrderType == "goods") {
+                $("#edit_activity_type1_mustNotOrder_goods_div").attr("style", "display: block");
+                $("#edit_activity_type1_mustNotOrder_product_div").attr("style", "display: none");
+                $("#edit_activity_type1_mustNotOrder_goods").multiselect('select', data.mustNotOrderInfo);
+                $(".edit_activity_type1_checkMustNotOrderMode").html("商品")
+            }
+            $("#edit_activity_type1_checkMustOrderMode").val(data.checkMustOrderMode);
+            $("#edit_activity_type1_checkMustNotOrderMode").val(data.checkMustNotOrderMode);
+            $("#edit_activity_type1_openLimit").val(data.openLimit);
+            $("#edit_activity_type1_limitNumber").val(data.limitNumber);
+            $("#edit_activity_type1_limitByArea").val(data.limitByArea);
+            $("#edit_activity_type1_openFilter").val(data.openFilter);
+            if (data.openLimit == "true") {
+                $(".edit_activity_type1_openLimit_yes").attr("style", "display: block");
+            }
+            // 初始化各区域表
+            if ($("#editAreaTable").hasClass('dataTable')) {
+                dttable = $('#editAreaTable').dataTable();
+                dttable.fnClearTable(); //清空一下table
+                dttable.fnDestroy(); //还原初始化了的datatable
+            }
+            var languageUrl = ["/json/dataTables.chinese.lang.json"];
+            $("#editAreaTable").DataTable({
+                data: data.areaLimit,
+                responsive: true,
+                paging: false,
+                ordering: false,
+                columns: [
+                    {"data": "areaId"},
+                    {"data": "areaName", "className": "area-limit"},
+                    {"data": "areaLimitNumber", "className": "area-limit"},
+                    {"data": null, "defaultContent": "<button class='edit-btn' type='button'>编辑</button>"}
+                ],
+                columnDefs: [
+                    {
+                        "targets": 0,
+                        "visible": false,
+                        "searchable": false
+                    }
+                ],
+                language: {
+                    "url": languageUrl
+                },
+                searching: false
+            });
+            if (data.limitByArea == "true") {
+                $("#edit_activity_type1_limitByArea_area_div").attr("style", "display: block");
+            }
+            $("#edit_activity_type1_orderLength").val(data.orderLength);
+        }
+        if (data.enType == "type2") {
+            $(".edit_activity_type1").attr("style", "display: none");
+            $(".edit_activity_type2").attr("style", "display: block");
+            $("#edit_activity_type2_effectiveDate").datepicker('setDate', data.effectiveDate.substr(0, 10));
+            $("#edit_activity_type2_expireDate").datepicker('setDate', data.expireDate.substr(0, 10));
+            $("#edit_activity_type2_advanceRemindDay").val(data.advanceRemindDay);
+            $("#edit_activity_type2_correlationType1ActivityId").val(data.correlationType1ActivityId);
+        }
+    }
+
+    /**
+     * 获取当前时间 格式：yyyy-MM-dd HH:MM:SS
+     */
+    function getCurrentTime() {
+        var date = new Date();//当前时间
+        var month = zeroFill(date.getMonth() + 1);//月
+        var day = zeroFill(date.getDate());//日
+
+        //当前时间
+        return date.getFullYear() + "-" + month + "-" + day
+    }
+
+    /**
+     * 补零
+     */
+    function zeroFill(i) {
+        if (i >= 0 && i <= 9) {
+            return "0" + i;
+        } else {
+            return i;
+        }
+    }
+
+    // 点击排序按钮
+    function priorityClick(event) {
+        var type;
+        if ($(event).text() == "上移") {
+            type = "up";
+        }
+        if ($(event).text() == "下移") {
+            type = "down";
+        }
+        var row = $("#priorityOrderDataTable").DataTable().row($(event).parents("tr"));
+        var data = row.data();
+        var result = priorityOrder(data.id, type);
+        if (result) {
+            $("#priorityOrderDataTable").DataTable().draw(false);
+        }
+    }
+
+    // 活动优先级排序
+    function priorityOrder(id, type) {
+        var getUrl = "/activity/activity/priorityLevel/" + type + "/" + id;
+        var result = false;
+        $.ajax({
+            url: [getUrl],
+            type: "POST",
+            async: false,
+            "error": function () {
+                alert("服务器未正常响应，请重试");
+            },
+            "success": function (response) {
+                if (response.data) {
+                    alert("操作成功");
+                    result = true;
+                } else {
+                    alert(response.message);
+                }
+            }
+        });
+        return result;
+    }
+</script>
+
+</body>
+
+</html>
