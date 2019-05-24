@@ -1,6 +1,8 @@
 package cn.ipanel.wendeng.service.service;
 
 import cn.ipanel.wendeng.service.entity.VideoData;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +14,9 @@ import java.util.List;
  **/
 public interface IVideoDateService {
 
-    public List<VideoData> findAll();
+    List<VideoData> findAll();
 
-    public void addVideoData(VideoData videoData);
+    Page<VideoData> findAll(Pageable pageable);
+
+    void addVideoData(VideoData videoData);
 }

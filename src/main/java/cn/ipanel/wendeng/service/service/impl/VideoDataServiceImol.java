@@ -5,6 +5,8 @@ import cn.ipanel.wendeng.service.entity.VideoData;
 import cn.ipanel.wendeng.service.service.IVideoDateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,11 @@ public class VideoDataServiceImol implements IVideoDateService{
     @Override
     public List<VideoData> findAll(){
         return (List<VideoData>)videoDataRepository.findAll();
+    }
+
+    @Override
+    public Page<VideoData> findAll(Pageable pageable){
+        return videoDataRepository.findAll(pageable);
     }
 
     @Override

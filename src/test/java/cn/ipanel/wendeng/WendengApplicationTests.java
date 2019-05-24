@@ -1,6 +1,8 @@
 package cn.ipanel.wendeng;
 
+import cn.ipanel.wendeng.service.dao.VideoDataRepository;
 import cn.ipanel.wendeng.service.entity.Channel;
+import cn.ipanel.wendeng.service.entity.VideoData;
 import cn.ipanel.wendeng.service.service.IChannelService;
 import cn.ipanel.wendeng.service.spider.SpiderConfig;
 import cn.ipanel.wendeng.service.spider.processor.TelevisionProcessor;
@@ -15,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit4.SpringRunner;
 import us.codecraft.webmagic.Spider;
@@ -37,13 +40,15 @@ public class WendengApplicationTests {
     private TelevisionProcessor televisionProcessor;
     private SpiderTask spiderTask;
     private SpiderConfig spiderConfig;
+    private VideoDataRepository videoDataRepository;
     @Autowired
     public void SpiderTest(IChannelService channelService,TelevisionProcessor televisionProcessor,
-                           SpiderTask spiderTask, SpiderConfig spiderConfig){
+                           SpiderTask spiderTask, SpiderConfig spiderConfig,VideoDataRepository videoDataRepository){
         this.channelService = channelService;
         this.televisionProcessor = televisionProcessor;
         this.spiderTask = spiderTask;
         this.spiderConfig = spiderConfig;
+        this.videoDataRepository = videoDataRepository;
     }
 
 	@Test
@@ -118,6 +123,12 @@ public class WendengApplicationTests {
 		Map<String,String> downloadedFiles = spiderTask.traversalFiles(file);
 		log.info("files:{}",downloadedFiles.size());
 		downloadedFiles.keySet().forEach(System.out::println);
+	}
+
+	@Test
+	public void testVideo(){
+    	List<VideoData> list = videoDataRepository.findAll(PageRequest.of(0,10)).getContent();
+    	list.forEach(info->System.out.println(info.getId()+" "+info.getTitle()));
 	}
 
 }
