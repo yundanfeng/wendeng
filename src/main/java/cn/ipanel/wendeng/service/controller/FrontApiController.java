@@ -1,14 +1,16 @@
 package cn.ipanel.wendeng.service.controller;
 
+import cn.ipanel.wendeng.service.controller.resp.ListResp;
 import cn.ipanel.wendeng.service.entity.VideoData;
 import cn.ipanel.wendeng.service.service.IVideoDateService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -29,10 +31,11 @@ public class FrontApiController {
     IVideoDateService videoDateService;
 
     @ApiIgnore
-    @RequestMapping(value = "news/{id}",method = RequestMethod.GET)
-    public String queryNews(@PathVariable(value = "id") Integer id, ModelMap map){
-        List<VideoData> videoDataList = videoDateService.findAll(PageRequest.of(id,10)).getContent();
-        map.put("list",videoDataList);
+    @RequestMapping(value = "news",method = RequestMethod.GET)
+    public String queryNews(@RequestParam Integer page, @RequestParam Integer size, ModelMap map){
+        Page videoData = videoDateService.findAll(PageRequest.of(page,size));
+        List<VideoData> list = videoData.getContent();
+        map.put("videoDate",new ListResp(videoData.getTotalPages(),videoData.getTotalElements(),list));
         return "news";
     }
 }
