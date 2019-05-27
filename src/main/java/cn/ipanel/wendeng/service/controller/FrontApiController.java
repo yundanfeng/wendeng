@@ -34,8 +34,11 @@ public class FrontApiController {
     @RequestMapping(value = "news",method = RequestMethod.GET)
     public String queryNews(@RequestParam Integer page, @RequestParam Integer size, ModelMap map){
         Page videoData = videoDateService.findAll(PageRequest.of(page,size));
+        Integer pages = videoData.getTotalPages();
+        long number = videoData.getTotalElements();
         List<VideoData> list = videoData.getContent();
-        map.put("videoDate",new ListResp(videoData.getTotalPages(),videoData.getTotalElements(),list));
+        log.info("videoPages:{},videoNumber:{}",pages,number);
+        map.put("videoData",new ListResp(pages,number,list));
         return "news";
     }
 }

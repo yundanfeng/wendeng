@@ -134,7 +134,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="info:${videoDate.list}">
+                            <tr th:each="info:${videoData.list}">
                                 <td th:text="${info.id}"></td>
                                 <td th:text="${info.title}"></td>
                                 <td th:text="${info.channelId}"></td>
@@ -149,7 +149,8 @@
                     </div>
                         <!-- /.table-responsive -->
                         <div class="panel-footer">
-                            <nav>
+                            <p class="navbar-text navbar-left" th:text="'一共有：'+${videoData.number}+'条数据,'+${videoData.page}+'页'"></p>
+                            <nav class="text-center">
                                 <ul class="pagination pagination-sm">
                                     <li class="disabled">
                                         <a href="#" aria-label="Previous">
@@ -207,7 +208,7 @@
 
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script>
-    $(function(){
+    $(document).ready(function () {
         function initTableCheckbox() {
             var $thr = $('table thead tr');
             var $checkAllTh = $('<th><input type="checkbox" id="checkAll" name="checkAll" /></th>');
@@ -250,10 +251,7 @@
             });
         }
         initTableCheckbox();
-    });
-</script>
-<script>
-    $(document).ready(function () {
+        /*每页列表数下拉框事件*/
         $('#dataTable_select').bind("change",function(){
             var table_length = $(this).val();
             var getInfoUrl = "/front/news?page=0"+"&size="+table_length;
@@ -270,6 +268,11 @@
                     var dataString = $('<div></div>').append(response).find('#activityDataTable').html();
                     var tableData = $("#activityDataTable");
                     tableData.html(dataString);
+                    /**/
+                    var pannelFooter = $(".panel-footer");
+                    pannelFooter.html($('<div></div>').append(response).find(".panel-footer").html());
+                    /*复选框初始化*/
+                    initTableCheckbox();
                 }
             });
         });

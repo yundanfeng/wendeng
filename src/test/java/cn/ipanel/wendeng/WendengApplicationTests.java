@@ -2,7 +2,6 @@ package cn.ipanel.wendeng;
 
 import cn.ipanel.wendeng.service.dao.VideoDataRepository;
 import cn.ipanel.wendeng.service.entity.Channel;
-import cn.ipanel.wendeng.service.entity.VideoData;
 import cn.ipanel.wendeng.service.service.IChannelService;
 import cn.ipanel.wendeng.service.spider.SpiderConfig;
 import cn.ipanel.wendeng.service.spider.processor.TelevisionProcessor;
@@ -17,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -127,8 +127,10 @@ public class WendengApplicationTests {
 
 	@Test
 	public void testVideo(){
-    	List<VideoData> list = videoDataRepository.findAll(PageRequest.of(0,10)).getContent();
-    	list.forEach(info->System.out.println(info.getId()+" "+info.getTitle()));
+    	Page page = videoDataRepository.findAll(PageRequest.of(0,10));
+    	log.info("pages:{},number:{}",page.getTotalPages(),page.getTotalElements());
+/*    	List<VideoData> list = page.getContent();
+    	list.forEach(info->System.out.println(info.getId()+" "+info.getTitle()));*/
 	}
 
 }
