@@ -1,0 +1,6 @@
+1.系统已装好jdk1.8
+2.创建数据库，运行spider_sdwh.sql
+3.运行wendeng-0.0.1-SNAPSHOT.jar，运行命令：
+nohup java -jar wendeng-0.0.1-SNAPSHOT.jar --spring.datasource.url=数据库地址 --spring.datasource.username=数据库用户
+ --spring.datasource.password=数据库密码 --logging.path=日志目录 --spider.file-download=yes --spider.file-path=爬虫文件存放地址
+--spider.video-num=1000 &

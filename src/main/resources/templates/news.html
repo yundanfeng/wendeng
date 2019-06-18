@@ -151,7 +151,7 @@
                         <div class="panel-footer">
                             <p class="navbar-text navbar-left" th:text="'一共有：'+${videoData.number}+'条数据,'+${videoData.page}+'页'"></p>
                             <nav class="text-center">
-                                <ul class="pagination pagination-sm">
+                                <ul class="pagination">
                                     <li class="disabled">
                                         <a href="#" aria-label="Previous">
                                             <span aria-hidden="true">«</span>
@@ -206,8 +206,10 @@
 <!-- Custom Theme JavaScript -->
 <script th:src="@{/dist/js/sb-admin-2.js}"></script>
 
+<script th:src="@{/vendor/pagination/jquery.pagination.js}"></script>
+
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
-<script>
+<script th:inline="javascript">
     $(document).ready(function () {
         function initTableCheckbox() {
             var $thr = $('table thead tr');
@@ -275,6 +277,9 @@
                     initTableCheckbox();
                 }
             });
+        });
+        $(".pagination").pagination({pageCount:[[${videoData.page}]]},function () {
+
         });
     });
 </script>

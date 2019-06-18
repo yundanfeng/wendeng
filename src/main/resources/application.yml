@@ -32,7 +32,7 @@ logging:
 info:
   project: wendeng
   application:
-    name: marketing-compaign-services
+    name: wendeng
 spider:
   file-download: NO
   file-path: F:/file
